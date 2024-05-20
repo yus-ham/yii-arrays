@@ -10,15 +10,31 @@ use Throwable;
 use Yiisoft\Strings\NumericHelper;
 use Yiisoft\Strings\StringHelper;
 
+use function array_column;
+use function array_combine;
 use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_pop;
+use function array_search;
+use function array_shift;
 use function count;
+use function end;
+use function explode;
+use function get_object_vars;
 use function gettype;
+use function htmlspecialchars;
+use function htmlspecialchars_decode;
 use function in_array;
 use function is_array;
 use function is_float;
 use function is_int;
 use function is_object;
 use function is_string;
+use function range;
+use function str_ends_with;
+use function strcasecmp;
+use function substr;
 
 /**
  * Yii array helper provides static methods allowing you to deal with arrays more efficiently.
@@ -1342,10 +1358,34 @@ final class ArrayHelper
      * @return array The public member variables of the object.
      *
      * @link https://www.php.net/manual/en/function.get-object-vars.php
+     *
+     * @psalm-return array<string, mixed>
      */
     public static function getObjectVars(object $object): array
     {
         return get_object_vars($object);
+    }
+
+    /**
+     * Rename key in array.
+     *
+     * @param array $array Source array.
+     * @param int|string $from Key to rename.
+     * @param int|string $to New key name.
+     *
+     * @return array The result array.
+     */
+    public static function renameKey(array $array, int|string $from, int|string $to): array
+    {
+        if (!array_key_exists($from, $array)) {
+            return $array;
+        }
+
+        $keys = array_keys($array);
+        $index = array_search($from, $keys);
+        $keys[$index] = $to;
+
+        return array_combine($keys, $array);
     }
 
     /**
